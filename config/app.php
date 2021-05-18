@@ -4,7 +4,7 @@ use app\http\middlewares\Authenticate;
 use app\http\middlewares\CheckMiddleware;
 use app\http\middlewares\GlobalMiddleware;
 use app\http\middlewares\ValidateMiddleware;
-use app\http\middlewares\Logined;
+use app\service\AppServiceProvider;
 
 return [
     'service' => [
@@ -22,5 +22,8 @@ return [
     'globalMiddleware' => [
         GlobalMiddleware::class,
         [GlobalMiddleware::class, 'test'],
+    ],
+    'boot' => [
+        AppServiceProvider::class
     ]
 ];

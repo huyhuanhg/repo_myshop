@@ -13,6 +13,10 @@ class Controller
         //thuc thi middleware
             Middleware::runBeforeMiddleware();
 
+            //load data share
+
+        ServiceProvider::loadDatashare();
+
         new Helper('app/helpers');
         $this->request = new Request();
         $this->response = new Response();
@@ -43,12 +47,22 @@ class Controller
         if (isset($layout)) {
             $this->setLayout($layout);
         }
-        $viewContent = $this->getViewContent($viewFile, $data);
+
+        if (!empty(View::$dataShare)){
+            $data['share'] = View::$dataShare;
+        }
+        $data['viewContent'] = $this->getViewContent($viewFile, $data);
         if ($this->layout !== null) {
             $layoutPath = __DIR_ROOT__ . '/app/views/' . $this->layout . '.php';
+
+            ob_start();
             if (file_exists($layoutPath)) {
                 require_once($layoutPath);
             }
+            $contentView = ob_get_contents();
+            ob_end_clean();
+            $template = new Template();
+            $template->run($contentView, $data);
         }
     }
 
@@ -90,21 +104,27 @@ class Controller
         if (file_exists($viewPath)) {
             ob_start();
             require_once($viewPath);
-            return ob_get_clean();
+            $contentView = ob_get_contents();
+            ob_end_clean();
+            return$contentView;
         }
     }
 
     public static function view($view, $data = null)
     {
         $viewPath = __DIR_ROOT__ . '/app/views/' . $view . '.php';
-        if (is_array($data)) {
-            extract($data, EXTR_PREFIX_SAME, 'data');
-        } else {
-            $data = $data;
+
+        if (!empty(View::$dataShare)){
+            $data['share'] = View::$dataShare;
         }
+        ob_start();
         if (file_exists($viewPath)) {
             require_once($viewPath);
         }
+        $contentView = ob_get_contents();
+        ob_end_clean();
+        $template = new Template();
+        $template->run($contentView, $data);
     }
 
     public function model($model)

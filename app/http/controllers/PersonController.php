@@ -20,13 +20,15 @@ class PersonController extends Controller
 
     public function index()
     {
-        $data['person'] = json_decode($this->personObj->getAll());
+        $data['dataContent']['person'] = json_decode($this->personObj->getAll());
+        $data['_page_title'] = 'Person List';
         $this->render('index', $data);
     }
 
     public function add()
     {
-        $this->render('add');
+        $data['_page_title'] = 'Add Person';
+        $this->render('add', $data);
     }
 
     public function handleAdd()
@@ -52,7 +54,8 @@ class PersonController extends Controller
         //if là nhiệm vụ của middleware
         if (array_key_exists('id', $this->request->__dataField) && !empty($this->request->__dataField['id'])) {
             $personID = $this->request->__dataField['id'];
-            $data['person_name'] = json_decode($this->personObj->getPersonByID($personID));
+            $data['_page_title'] = 'Delete Person';
+            $data['dataContent']['person_name'] = json_decode($this->personObj->getPersonByID($personID));
             $this->render('delete', $data);
         } else {
             $this->redirect('person');
@@ -84,7 +87,9 @@ class PersonController extends Controller
     {
         if (array_key_exists('id', $this->request->__dataField) && !empty($this->request->__dataField['id'])) {
             $personID = $this->request->__dataField['id'];
-            $data['person'] = json_decode($this->personObj->getPersonByID($personID));
+            $dataUser = json_decode($this->personObj->getPersonByID($personID));
+            $data['dataContent']['person'] = reset($dataUser);
+            $data['_page_title'] = 'Edit Person';
             $this->render('edit', $data);
         } else {
             $this->redirect('person');
