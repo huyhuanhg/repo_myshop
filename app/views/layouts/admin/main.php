@@ -16,10 +16,10 @@
     <link rel="stylesheet" href="{! __WEB_ROOT__ !}/assets/css/form-validate.css">
     <script src="{!__WEB_ROOT__ !}/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="{! __WEB_ROOT__ !}/assets/js/main/main.js"></script>
-    <script src="{! __WEB_ROOT__ !}/assets/js/js_library/Validate/Validator.js"></script>
-    <script src="{! __WEB_ROOT__ !}/assets/js/js_library/Query/Hquery.js"></script>
-    <script src="{! __WEB_ROOT__ !}/assets/js/js_library/Ajax/Ajax.js"></script>
-    <script src="{! __WEB_ROOT__ !}/assets/js/js_library/hquery.js"></script>
+    <script src="{! __WEB_ROOT__ !}/assets/js/library/Validate/Validator.js"></script>
+    <script src="{! __WEB_ROOT__ !}/assets/js/library/Query/Hquery.js"></script>
+    <script src="{! __WEB_ROOT__ !}/assets/js/library/Ajax/Ajax.js"></script>
+    <script src="{! __WEB_ROOT__ !}/assets/js/library/hquery.js"></script>
 
 </head>
 <body>
