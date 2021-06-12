@@ -80,7 +80,12 @@ trait QueryBuilder
 
     public function having($column, $operator, $value, $logicalOperator = 'AND')
     {
-        $this->havings[] = [$column, $operator, $value, $logicalOperator];
+        if (strtoupper($operator) === 'IS' && strtoupper($value) === 'NULL') {
+            $this->havings[$logicalOperator][] = [$column, $operator, $value];
+        } else {
+            $this->havings[$logicalOperator][] = [$column, $operator, is_string($value) ? "'" .
+                str_replace("'", "\'", $value) . "'" : $value];
+        }
         return $this;
     }
 
@@ -109,7 +114,6 @@ trait QueryBuilder
 
     private function addWhere($sql)
     {
-        ;
         $sql .= " WHERE";
         if (array_key_exists('AND', $this->wheres)) {
             foreach ($this->wheres['OR'] as $where) {
@@ -125,6 +129,30 @@ trait QueryBuilder
             foreach ($this->wheres['OR'] as $wk => $where) {
                 $sql .= " $where[0] $where[1] $where[2]";
                 if ($wk < count($this->wheres['OR']) - 1) {
+                    $sql .= " OR";
+                }
+            }
+        }
+        return $sql;
+    }
+
+    private function addHaving($sql)
+    {
+        $sql .= " HAVING";
+        if (array_key_exists('AND', $this->havings)) {
+            foreach ($this->havings['OR'] as $having) {
+                $sql .= " $having[0] $having[1] $having[2] OR";
+            }
+            foreach ($this->havings['AND'] as $hk => $having) {
+                $sql .= " $having[0] $having[1] $having[2]";
+                if ($hk < count($this->havings['AND']) - 1) {
+                    $sql .= " AND";
+                }
+            }
+        } else {
+            foreach ($this->havings['OR'] as $hk => $having) {
+                $sql .= " $having[0] $having[1] $having[2]";
+                if ($hk < count($this->havings['OR']) - 1) {
                     $sql .= " OR";
                 }
             }
@@ -154,19 +182,15 @@ trait QueryBuilder
         if (isset($this->wheres) && is_array($this->wheres)) {
             $sql = $this->addWhere($sql);
         }
+
+        if (isset($this->havings) && is_array($this->havings)) {
+            $sql = $this->addHaving($sql);
+        }
+
         if (isset($this->groups) && is_array($this->groups)) {
             $sql .= ' GROUP BY ' . implode(', ', $this->groups);
         }
 
-        if (isset($this->havings) && is_array($this->havings)) {
-            $sql .= " HAVING";
-            foreach ($this->havings as $hk => $having) {
-                $sql .= " $having[0] $having[1] $having[2]";
-                if ($hk < count($this->havings) - 1) {
-                    $sql .= " $having[3]";
-                }
-            }
-        }
 
         if (isset($this->orders) && is_array($this->havings)) {
             $sql .= " ORDER BY";
@@ -229,7 +253,7 @@ trait QueryBuilder
     private function handleString($value)
     {
         if (is_string($value) && !preg_match("~b'[0-1]'~is", $value)) {
-            return  "'" . str_replace("'","\'", $value). "'";
+            return "'" . str_replace("'", "\'", $value) . "'";
         }
         return $value;
     }

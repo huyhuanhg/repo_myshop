@@ -2,7 +2,7 @@
 
 namespace app\core;
 
-use app\Exceptions\AppException  as E;
+use app\Exceptions\AppException as E;
 
 /**
  * Class Router
@@ -32,21 +32,22 @@ class Router
     {
         return $_SERVER['REQUEST_METHOD'] ?? 'GET';
     }
-    public static function view($view, $data = null){
+
+    public static function view($view, $data = null)
+    {
         $viewPath = __DIR_ROOT__ . '/app/' . $view . '.php';
-        if (is_array($data)) {
-            extract($data, EXTR_PREFIX_SAME, 'data');
-        } else {
-            $data = $data;
-        }
+        ob_start();
         if (file_exists($viewPath)) {
             require_once($viewPath);
         }
-        die();
+        $contentView = ob_get_contents();
+        ob_end_clean();
+        $template = new Template();
+        $template->run($contentView, $data);
     }
+
     private static function addRouter($method, $url, $action)
     {
-
         $namespace = self::findNamespace();
         self::$routers[] = [$method, $url !== '/' ? trim($url, '/') : '/', $namespace, $action];
     }
@@ -120,10 +121,11 @@ class Router
                 if (class_exists($className) && method_exists($className, $methodName)) {
                     Session::flash('controller', reset($ctl));
                     Session::flash('action', $methodName);
+
                     $className = new $className;
                     call_user_func_array([$className, $methodName], $param);
                 } else {
-                throw new E("$className hoặc $methodName() không tồn tại!");
+                    throw new E("$className hoặc $methodName() không tồn tại!");
 //                    echo "loi class hoac method";
                 }
             } else {
@@ -171,8 +173,9 @@ class Router
                 }
             }
             return $this->callAction($action, $params);
-
         }
+        self::view('errors/404');
+        die();
     }
 
     public static function group($actionGroup, $registry)

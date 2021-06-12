@@ -1,8 +1,10 @@
 <?php
 
 namespace app\core;
+
 use app\Exceptions\AppException as E;
 use PDO;
+
 class Database
 {
     private $__conn;
@@ -11,7 +13,7 @@ class Database
     public function __construct($table = null)
     {
         $this->__conn = Connect::getInstance(Registry::getIntance()->database)->connect;
-        if (isset($table)){
+        if (isset($table)) {
             $this->from = $table;
         }
     }
@@ -28,7 +30,9 @@ class Database
             E::loadError('database', $data);
         }
     }
-    public function fetchAssoc($data){
+
+    public function fetchAssoc($data)
+    {
         return $data->fetchAll(PDO::FETCH_ASSOC);
     }
 

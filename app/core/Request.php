@@ -76,7 +76,7 @@ class Request
                 foreach ($rulesArr as $rule) {
                     $ruleName = null;
                     $ruleValue = null;
-                    $ruleArr = explode(':', $rule,2);
+                    $ruleArr = explode(':', $rule, 2);
                     $ruleName = reset($ruleArr);
                     if (count($ruleArr) > 1) {
                         $ruleValue = end($ruleArr);
@@ -210,15 +210,52 @@ class Request
         return false;
     }
 
-    private function unique($rule, $params)
+    private function matches($rule, $params)
     {
-        $paramsArr= explode(':',$params);
-        $tableName = reset($paramsArr);
-        $fieldName = end($paramsArr);
-        $unique = Database::table($tableName)->where($fieldName,'=', $rule)->get()->rowCount();
-        if ($unique === 1){
+        if (preg_match("~$params~is", $rule)) {
+            return true;
+        }
+        return false;
+    }
+
+    private function notMatches($rule, $params)
+    {
+        if (preg_match("~$params~is", $rule)) {
             return false;
         }
         return true;
+    }
+
+    private function unique($rule, $params)
+    {
+        $paramsArr = explode(':', $params);
+        if (count($paramsArr) === 2) {
+            $tableName = reset($paramsArr);
+            $fieldName = end($paramsArr);
+        } else if (count($paramsArr) === 3) {
+            $tableName = reset($paramsArr);
+            $fieldName = $paramsArr[1];
+            $valueException = end($paramsArr);
+            if ($rule === $valueException) {
+                return true;
+            }
+        }
+        $unique = Database::table($tableName)->where($fieldName, '=', $rule)->get()->rowCount();
+        if ($unique > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    private function exist($rule, $params)
+    {
+        $paramsArr = explode(':', $params);
+        $tableName = reset($paramsArr);
+        $fieldName = end($paramsArr);
+        $exist = Database::table($tableName)->select($fieldName)->where($fieldName, '=', $rule)->get()->rowCount();
+        if ($exist > 0) {
+            return true;
+        }
+        return false;
     }
 }

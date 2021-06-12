@@ -1,0 +1,121 @@
+body {
+    font-family: 'Montserrat';
+    background-color: var(--bs-gray-300);
+}
+.vh-65{
+    height: 65vh;
+}
+.vh-35{
+    height: 35vh;
+}
+.abs-50 {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.right-1 {
+    right: .25rem;
+}
+
+.w-40 {
+    width: 40%;
+}
+
+.icon-circle {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.bg-teal-700 {
+    background-color: var(--bs-teal-700);
+}
+.text-teal-700{
+    color: var(--bs-teal-700);
+}
+.rounded-5{
+    border-radius: .5rem;
+}
+.w-30{
+    width: var(--percent-30);
+}
+.container-user{
+    max-width: 960px;
+}
+.user-form-content{
+    padding-top: 120px;
+}
+.mt-n3{
+    margin-top: var(--spacer-n3) !important;
+}
+.full-height{
+    height: 100vh;
+}
+.logo{
+    letter-spacing: .125rem;
+}
+.text-purple{
+    color: var(--bs-purple-600);
+}
+.btn-header{
+    font-weight: bold;
+    padding: .75rem 2rem;
+    background-color: var(--bs-purple-300);
+    border: 1px solid var(--bs-purple-300);
+    color: var(--bs-purple-800);
+    transition: ease var(--ms-3);
+}
+.btn-header:hover{
+    background-color: var(--bs-purple-400);
+    color: var(--bs-purple-100);
+}
+.btn-custom{
+    color: var(--bs-purple-400);
+    border: 1px solid var(--bs-purple-400);
+    transition: ease var(--ms-4);
+}
+.btn-custom:hover{
+    background-color: var(--bs-purple-400);;
+    color: var(--bs-purple-100);
+}
+.btn-outline-custom{
+    padding: var(--spacer-2) var(--spacer-4);
+    border-radius: var(--spacer-5);
+    border: 2px solid var(--bs-blue-700);
+    font-weight: bold;
+    font-size: 150%;
+    color: var(--bs-blue-700);
+    transition: ease var(--ms-4);
+}
+.btn-outline-custom:hover{
+    background-color:  var(--bs-blue-700);
+    color: var(--bs-blue-100);
+}
+.bg-header{
+    /*background-image: linear-gradient(var(--bs-purple-300), var(--bs-purple-600)) !important;*/
+    background-color: white;
+}
+
+.heading-user-form{
+    left: 3rem;
+    /*transform: translateY(-80%);*/
+}
+.heading-letter-3{
+    letter-spacing: var(--spacer-1);
+}
+.heading-logo{
+    letter-spacing: var(--spacer-2);
+    font-size: 300%;
+}
+.heading-caption{
+    font-size: 180%;
+    line-height: 120%;
+    color: var(--bs-gray-600);
+}
+.bt-second{
+    border-top: 1px solid var(--bs-gray-500);
+}
+.footer{
+    background-color: #f2f4f6;
+    /*padding: rem;*/
+}

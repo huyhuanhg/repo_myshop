@@ -1,6 +1,7 @@
 <?php
 
 namespace app\core;
+
 use app\Exceptions\AppException as E;
 
 class Session
@@ -63,6 +64,6 @@ class Session
 
     public static function isInvalid()
     {
-        return Registry::getIntance()->session['session_key'] ?? self::showError("loi session");
+        return Registry::getIntance()->cache['session_key'] ?? self::showError("Lỗi Session");
     }
 }

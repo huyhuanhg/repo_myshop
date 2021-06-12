@@ -8,18 +8,20 @@ class Controller
 {
     private $layout = null;
     public $request, $response;
+    public $sKey;
+
     public function __construct()
     {
+        new Helper('app/helpers');
         //thuc thi middleware
-            Middleware::runBeforeMiddleware();
+        Middleware::runBeforeMiddleware();
 
-            //load data share
+        //load data share
 
         ServiceProvider::loadDatashare();
-
-        new Helper('app/helpers');
         $this->request = new Request();
         $this->response = new Response();
+        $this->sKey = Session::isInvalid();
         if (isset(Registry::getIntance()->web['layout'])) {
             $this->layout = Registry::getIntance()->web['layout'];
         } else {
@@ -39,7 +41,7 @@ class Controller
      */
     public function redirect($uri, $isEnd = true, $resPonseCode = 302)
     {
-        $this->response->redirect($uri);
+        $this->response->redirect($uri, $isEnd, $resPonseCode);
     }
 
     public function render($viewFile, $data = null, $layout = null)
@@ -48,10 +50,10 @@ class Controller
             $this->setLayout($layout);
         }
 
-        if (!empty(View::$dataShare)){
+        if (!empty(View::$dataShare)) {
             $data['share'] = View::$dataShare;
         }
-        $data['viewContent'] = $this->getViewContent($viewFile, $data);
+        $data['viewContent'] = $this->getViewContent($viewFile);
         if ($this->layout !== null) {
             $layoutPath = __DIR_ROOT__ . '/app/views/' . $this->layout . '.php';
 
@@ -66,47 +68,17 @@ class Controller
         }
     }
 
-    /*
-        public function renderMultiContent($listViewContentData, $layout = null)
-        {
-            if (isset($layout)) {
-                $this->setLayout($layout);
-            }
-            $content = [];
-            foreach ($listViewContentData as $filePath => $data) {
-                $fileArr = explode('/', $filePath);
-                $file = end($fileArr);
-                $content[$file] = $this->getViewContent($filePath, $data);
-                die("loi o function getViewContent");
-            }
-            echo "<pre>";
-
-            extract($content, EXTR_PREFIX_SAME, 'data');
-
-            if ($this->layout !== null) {
-                $layoutPath = __DIR_ROOT__ . '/app/views/' . $this->layout . '.php';
-                if (file_exists($layoutPath)) {
-                    require_once($layoutPath);
-                }
-            }
-        }
-    */
-    public function getViewContent($viewFile, $data = null)
+    public function getViewContent($viewFile)
     {
         $ctlDir = strtolower(Session::flash('controller'));
         $viewFolder = strtolower(str_replace('Controller', '', $ctlDir));
         $viewPath = __DIR_ROOT__ . '/app/views/' . $viewFolder . '/' . $viewFile . '.php';
-        if (is_array($data)) {
-            extract($data, EXTR_PREFIX_SAME, 'data');
-        } else {
-            $data = $data;
-        }
         if (file_exists($viewPath)) {
             ob_start();
             require_once($viewPath);
             $contentView = ob_get_contents();
             ob_end_clean();
-            return$contentView;
+            return $contentView;
         }
     }
 
@@ -114,7 +86,7 @@ class Controller
     {
         $viewPath = __DIR_ROOT__ . '/app/views/' . $view . '.php';
 
-        if (!empty(View::$dataShare)){
+        if (!empty(View::$dataShare)) {
             $data['share'] = View::$dataShare;
         }
         ob_start();

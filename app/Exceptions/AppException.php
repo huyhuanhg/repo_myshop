@@ -5,9 +5,10 @@ namespace app\Exceptions;
 
 
 use app\core\Router;
+use Exception;
 use Throwable;
 
-class AppException extends \Exception
+class AppException extends Exception
 {
     public function __construct($message = "", $code = 0, Throwable $previous = null)
     {
@@ -42,8 +43,10 @@ class AppException extends \Exception
             echo '<hr/>';
         }
     }
+
     public static function loadError($errorType = '404', $data = [])
     {
-        Router::view('errors/'.$errorType, $data);
+        Router::view('errors/' . $errorType, $data);
+        die();
     }
 }

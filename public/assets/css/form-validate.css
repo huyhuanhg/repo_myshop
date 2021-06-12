@@ -1,0 +1,36 @@
+.needs-validation .form-group {
+    position: relative;
+    padding: var(--spacer-2) 0;
+}
+
+.needs-validation .form-group.invalid input, .needs-validation .form-check.invalid input, .needs-validation .form-group.invalid select, .needs-validation .form-group.invalid textarea {
+    border-color: var(--bs-danger);
+    background-color: var(--bs-invalid);
+}
+
+.needs-validation .form-group.valid input, .needs-validation .form-group.valid select, .needs-validation .form-group.valid textarea {
+    border-color: var(--bs-success);
+    background-color: var(--bs-valid);
+}
+
+.needs-validation .invalid-feedback {
+    display: block;
+    position: absolute;
+    bottom: var(--spacer-n3);
+}
+
+.needs-validation .icon {
+    right: var(--spacer-3);
+}
+
+.needs-validation .form-group.invalid .icon {
+    color: var(--bs-danger);
+}
+
+.needs-validation .form-group.valid .icon {
+    color: var(--bs-success);
+}
+
+.needs-validation .form-check.invalid .form-check-label {
+    color: var(--bs-danger);
+}

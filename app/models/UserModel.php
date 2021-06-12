@@ -21,20 +21,21 @@ class UserModel extends DB
         return DB::table(self::__TABLE__)->where('account', '=', $id)->get();
     }
 
-    public function user_exists($userInfo)
+    public function user_exists($accountInfo)
     {
-        $user = DB::table(self::__TABLE__)->where('account', '=', $userInfo['acc'])->get();
+        $user = DB::table(self::__TABLE__)->where('account', '=', $accountInfo['account'])->get();
         $user = $this->fetchAssoc($user);
         if (count($user) === 1) {
             $user = reset($user);
-            if (password_verify($userInfo['pass'], $user['password'])){
-                return $user;
+            if (password_verify($accountInfo['password'], $user['password'])) {
+                unset($user['password']);
+                return json_encode($user);
             }
         }
         return false;
     }
 
-    public function registry($data)
+    public function register($data)
     {
         return DB::table(self::__TABLE__)->insert($data);
     }

@@ -5,6 +5,7 @@ use app\http\middlewares\CheckMiddleware;
 use app\http\middlewares\GlobalMiddleware;
 use app\http\middlewares\ValidateMiddleware;
 use app\service\AppServiceProvider;
+use app\service\HtmlHelper;
 
 return [
     'service' => [
@@ -12,12 +13,12 @@ return [
     ],
     'routeMiddlware' => [
         'auth' => Authenticate::class,
-        'check' => CheckMiddleware::class,
-        'validate-login' => [ValidateMiddleware::class, 'validate_login'],
-        'validate-edit' => [ValidateMiddleware::class, 'validate_edit'],
-        'validate-add' => [ValidateMiddleware::class, 'validate_add'],
-        'validate-registry' => [ValidateMiddleware::class, 'validate_registry'],
-        'logined' => [Authenticate::class, 'logined']
+        'ajax' => [Authenticate::class, 'ajax'],
+        'logined' => [Authenticate::class, 'logined'],
+        'vE_Cate' => [ValidateMiddleware::class, 'validate_updateCategory'],
+        'register' => [ValidateMiddleware::class, 'validate_register'],
+        'vA_Cate' => [ValidateMiddleware::class, 'validate_insertCategory'],
+        'vD_Cate' => [ValidateMiddleware::class, 'validate_deleteCategory'],
     ],
     'globalMiddleware' => [
         GlobalMiddleware::class,

@@ -1,9 +1,11 @@
 <?php
 
 namespace app\core;
+
 use app\Exceptions\AppException as E;
 use \PDO;
 use PDOException;
+
 class Connect
 {
     private static $instance = null;
@@ -11,9 +13,9 @@ class Connect
 
     private function __construct($db)
     {
-        try{
+        try {
             //cau hinh dsn
-            $dsn = "mysql:dbname=".$db['dbName'].";host=".$db['host'];
+            $dsn = "mysql:dbname=" . $db['dbName'] . ";host=" . $db['host'];
             //cau hinh options
             /**
              * - utf8
@@ -25,7 +27,7 @@ class Connect
             ];
             //lenh ket noi
             $this->connect = new PDO($dsn, $db['user'], $db['password'], $options);
-        } catch (PDOException $e){
+        } catch (PDOException $e) {
             $data['mess'] = $e->getMessage();
             E::loadError('database', $data);
         }

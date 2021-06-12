@@ -10,19 +10,10 @@
     <script src="{!__WEB_ROOT__ !}/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-<ul class="nav tabs"></ul>
-<ul class="navnav-tabs"></ul>
 <div class="container">
-
-    <div>
-        <h1>Client layout</h1>
-        {!logout()!}
-    </div>
-    <div style="clear: right"></div>
-    {! view('blocks/header', ['title'=>'header'])!}
-    {! raw($viewContent, $dataContent) !}
-    {! view('blocks/footer', ['title'=>'footer'])!}
-
+    <a href="{{__WEB_ROOT__}}/login">Đăng nhập</a><br/>
+    <a href="{{__WEB_ROOT__}}/register">Đăng ký</a><br/>
+    {!logout()!}
 </div>
 </body>
 </html>

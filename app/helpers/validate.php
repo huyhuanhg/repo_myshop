@@ -3,13 +3,40 @@
 use app\core\Session;
 
 $sessionKey = Session::isInvalid();
+
 if (!function_exists('formError')) {
     $GLOBALS['errors'] = Session::flash($sessionKey . "_errors");
-    function formError($fieldName, $beffore = null, $after = null)
+    function formError($fieldName, $beffore = '<div class="invalid-feedback">', $after = '</div>')
     {
         global $errors;
-        if (isset($errors) && array_key_exists($fieldName, $errors)) {
-            echo $beffore . $errors[$fieldName] . $after;
+        $fieldNameArr = explode('|', $fieldName);
+        foreach ($fieldNameArr as $field) {
+            if (isset($errors) && array_key_exists($field, $errors)) {
+                return $beffore . $errors[$field] . $after;
+            }
+        }
+        return null;
+    }
+}
+if (!function_exists('invalid')) {
+    function invalid($fieldName)
+    {
+        global $errors;
+        $fieldNameArr = explode('|', $fieldName);
+        foreach ($fieldNameArr as $field) {
+            if (isset($errors) && array_key_exists($field, $errors)) {
+                return 'invalid';
+            }
+        }
+        return null;
+    }
+}
+if (!function_exists('validated')) {
+    function validated()
+    {
+        global $errors;
+        if (isset($errors)) {
+            echo 'was-validated';
         }
         return null;
     }
@@ -44,47 +71,26 @@ if (!function_exists('msg')) {
 }
 if (!function_exists('msg_login')) {
     $GLOBALS['login_error'] = Session::flash($sessionKey . "_login_msg_error");
-    function msg_login($htmlBefore = '', $htmlAfter = '')
+    function msg_login($htmlBefore = '<div class="invalid-feedback">', $htmlAfter = '</div>')
     {
-        echo $htmlBefore . $GLOBALS['login_error'] . $htmlAfter;
+        global $login_error;
+        if (isset($login_error)) {
+            echo $htmlBefore . $login_error . $htmlAfter;
+        }
     }
 }
 if (!function_exists('selected')) {
-    function selected($fieldName, $value)
+    function selected($fieldName, $value, $default = null)
     {
         global $current;
         if (isset($current) && array_key_exists($fieldName, $current)) {
             if ($current[$fieldName] == $value) {
                 return 'selected';
-            } else {
-                return null;
             }
-        }
-    }
-}
-if (!function_exists('gender')) {
-    function gender($genderBool)
-    {
-        return $genderBool == 1 ? 'Nam' : 'Nữ';
-    }
-}
-if (!function_exists('currentSelected')) {
-    function currentSelected($fieldName, $default)
-    {
-        global $current;
-        if (isset($current) && array_key_exists($fieldName, $current)) {
-            return $current[$fieldName];
-        }
-        return $default;
-    }
-}
-if (!function_exists('personGender')) {
-    function personGender($personGender, $value)
-    {
-        if ($personGender == $value) {
-            return 'selected';
         } else {
-            return null;
+            if (isset($default) && $default == $value) {
+                return 'selected';
+            }
         }
     }
 }

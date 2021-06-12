@@ -7,32 +7,19 @@ use app\core\Controller;
 
 class HomeController extends Controller
 {
-    private $personObj;
+    private $productObj;
 
     public function __construct()
     {
         parent::__construct();
-        $this->personObj = $this->model('PersonModel');
+        $this->productObj = $this->model('ProductModel');
     }
 
     public function index()
     {
-        self::render('index');
+        $data['_page_title'] = "Smartphone Shop";
+        self::render('index', $data);
     }
 
-    public function checkQuery()
-    {
-        $data['sql'] = $this->personObj->checkQuery();
-        self::view('test', $data);
-    }
 
-    public function register()
-    {
-        self::render('register');
-    }
-
-    public function test()
-    {
-        self::view('layouts/clients/test');
-    }
 }

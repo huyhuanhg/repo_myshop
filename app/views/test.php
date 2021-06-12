@@ -1,2 +1,2 @@
 <h1>test renderPartial</h1>
-<p><pre><?php print_r($data['sql'])?></pre></p>
+<p><pre><?php print_r($data['sql.sql'])?></pre></p>

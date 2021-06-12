@@ -31,7 +31,7 @@ class Autoload
             if (file_exists(__DIR_ROOT__ . '/' . $file)) {
                 require_once(__DIR_ROOT__ . '/' . $file);
             } else {
-            throw new E("$file không tồn tại!");
+                throw new E("$file không tồn tại!");
             }
         }
     }

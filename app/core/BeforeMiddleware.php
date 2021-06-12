@@ -5,6 +5,7 @@ namespace app\core;
 
 
 use Closure;
+
 class BeforeMiddleware
 {
     public $response, $request;

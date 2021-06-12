@@ -1,1 +1,1 @@
-user index
+quản lý index
