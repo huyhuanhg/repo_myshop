@@ -3,7 +3,13 @@
 use app\core\Session;
 
 $sessionKey = Session::isInvalid();
-
+if (!function_exists('loadMsgError')){
+    $GLOBALS['msg_errors'] = Session::flash($sessionKey . "_errors");
+    function loadMsgError(){
+        global $msg_errors;
+        return json_encode($msg_errors);
+    }
+}
 if (!function_exists('formError')) {
     $GLOBALS['errors'] = Session::flash($sessionKey . "_errors");
     function formError($fieldName, $beffore = '<div class="invalid-feedback">', $after = '</div>')

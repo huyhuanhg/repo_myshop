@@ -19,6 +19,7 @@ return [
         'register' => [ValidateMiddleware::class, 'validate_register'],
         'vA_Cate' => [ValidateMiddleware::class, 'validate_insertCategory'],
         'vD_Cate' => [ValidateMiddleware::class, 'validate_deleteCategory'],
+        'vali_customer'=>[ValidateMiddleware::class, 'validate_customer'],
     ],
     'globalMiddleware' => [
         GlobalMiddleware::class,

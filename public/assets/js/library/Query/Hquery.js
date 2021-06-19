@@ -11,7 +11,7 @@ class Hquery {
     //Element form
     name;
     //form control
-    val;
+    value;
 
     constructor(node) {
         if (this.#isNode(node)) {
@@ -40,7 +40,7 @@ class Hquery {
     val(value = null) {
         if (this.#isElement(this.#node)) {
             if (value === null) {
-                return this.val
+                return this.#node.value
             } else {
                 this.#node.value = value;
             }
