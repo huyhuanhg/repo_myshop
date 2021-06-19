@@ -602,7 +602,7 @@ class BaseComponent {
 
 /**
  * --------------------------------------------------------------------------
- * Bootstrap (v5.0.0-beta3): alert.js
+ * Bootstrap (v5.0.0-beta3): alert.php.js
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  * --------------------------------------------------------------------------
  */
@@ -613,10 +613,10 @@ class BaseComponent {
  */
 
 const NAME$b = 'alert';
-const DATA_KEY$b = 'bs.alert';
+const DATA_KEY$b = 'bs.alert.php';
 const EVENT_KEY$b = `.${DATA_KEY$b}`;
 const DATA_API_KEY$8 = '.data-api';
-const SELECTOR_DISMISS = '[data-bs-dismiss="alert"]';
+const SELECTOR_DISMISS = '[data-bs-dismiss="alert.php"]';
 const EVENT_CLOSE = `close${EVENT_KEY$b}`;
 const EVENT_CLOSED = `closed${EVENT_KEY$b}`;
 const EVENT_CLICK_DATA_API$7 = `click${EVENT_KEY$b}${DATA_API_KEY$8}`;

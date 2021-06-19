@@ -22,12 +22,69 @@
     @endempty
 
     Tiêu thụ: {!$consume!} VNĐ<br/>
-    Tình trạng: {!$customer_status !== null?"Tạm khóa":"Hoạt động"!}<br/>
-
-    <a class="btn btn-danger" href="#">Xóa khách hàng</a>
-    <a class="btn btn-warning" href="#">{!$customer_status !== null?"Xóa khỏi blacklist":"Thêm vào blacklist"!}</a>
+    Ghi chú: {!$customer_status === "LIMITED"?"Hạn chế":"Tình trạng hoạt động"!}<br/>
+    <a id="delete" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">Xóa khách hàng</a>
+    <a class="btn btn-primary" href="{!__WEB_ROOT__!}/myadmin/customers?page=edit&sdt={!$customer_phone!}">Sửa khách
+        hàng</a>
+    <a id="blacklist" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        {!$customer_status === "LIMITED"?"Xóa khỏi blacklist":"Thêm vào blacklist"!}
+    </a>
     <a class="btn btn-info" href="#">Xem lịch sử mua hàng</a>
     @else
     <p>Không có khách hàng phù hợp</p>
     @endempty
 </div>
+
+<script>
+    $('#delete').event('mouseover', function (e) {
+        $.post('{!__WEB_ROOT__!}/customer-alert',
+            {
+                control: 'delete',
+                fullName: '{!$customer_fullName!}',
+                sdt: '{!$customer_phone!}'
+            }, function (data) {
+                $(e.target.parentElement).append(`<div class="alert-modal">${data}</div>`);
+            })
+    });
+    $('#delete').event('mouseout', function (e) {
+        let warningBox = $.e('.alert-modal');
+        if (!warningBox.classList.contains('active')) {
+            warningBox.remove();
+        }
+    });
+    $('#delete').click(function (e) {
+        $.e('.alert-modal').classList.add('active');
+        let cancelBtn = document.getElementById('cancel');
+        if (cancelBtn !== null) {
+            cancelBtn.onclick = function () {
+                $.e('.alert-modal').remove();
+            }
+        }
+    });
+    $('#blacklist').event('mouseover', function (e) {
+        $.post('{!__WEB_ROOT__!}/customer-alert',
+            {
+                control: 'blacklist',
+                fullName: '{!$customer_fullName!}',
+                sdt: '{!$customer_phone!}',
+                current:'{!$customer_status!}'
+            }, function (data) {
+                $(e.target.parentElement).append(`<div class="alert-modal">${data}</div>`);
+            })
+    });
+    $('#blacklist').event('mouseout', function (e) {
+        let warningBox = $.e('.alert-modal');
+        if (!warningBox.classList.contains('active')) {
+            warningBox.remove();
+        }
+    });
+    $('#blacklist').click(function (e) {
+        $.e('.alert-modal').classList.add('active');
+        let cancelBtn = document.getElementById('cancel');
+        if (cancelBtn !== null) {
+            cancelBtn.onclick = function () {
+                $.e('.alert-modal').remove();
+            }
+        }
+    });
+</script>

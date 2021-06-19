@@ -50,7 +50,7 @@ trait QueryBuilder
         return $this->join($table, $first, $operator, $second, 'RIGHT');
     }
 
-    public function where($column, $operator, $value, $logicalOperator = 'AND')
+    private function addWhere($column, $operator, $value, $logicalOperator = 'AND')
     {
         if (strtoupper($operator) === 'IS' && strtoupper($value) === 'NULL') {
             $this->wheres[$logicalOperator][] = [$column, $operator, $value];
@@ -58,12 +58,36 @@ trait QueryBuilder
             $this->wheres[$logicalOperator][] = [$column, $operator, is_string($value) ? "'" .
                 str_replace("'", "\'", $value) . "'" : $value];
         }
+    }
+
+    public function where()
+    {
+        $num_args = func_num_args();
+        $arg_list = func_get_args();
+        if (is_callable(reset($arg_list))) {
+            $logicalOperator = "AND";
+            if ($num_args === 2) {
+                $logicalOperator = end($arg_list);
+            }
+            $closures = reset($arg_list);
+            $copy = new $this;
+            $closures($copy);
+            $this->wheres[$logicalOperator][] = $copy->wheres;
+        } else {
+            list($column, $operator, $value, $logicalOperator) = $arg_list;
+            if ($num_args === 3) {
+                $logicalOperator = 'AND';
+            }
+            $this->addWhere($column, $operator, $value, $logicalOperator);
+        }
         return $this;
     }
 
     public function orWhere($column, $operator, $value)
     {
-        return $this->where($column, $operator, $value, 'OR');
+        $arg_list = func_get_args();
+        array_push($arg_list, 'OR');
+        return call_user_func_array([$this, 'where'], $arg_list);
     }
 
     public function isNull($column, $logicalOperator = 'AND')
@@ -112,27 +136,53 @@ trait QueryBuilder
         return $this;
     }
 
-    private function addWhere($sql)
+    private function insertWhere($array)
     {
-        $sql .= " WHERE";
-        if (array_key_exists('AND', $this->wheres)) {
-            foreach ($this->wheres['OR'] as $where) {
-                $sql .= " $where[0] $where[1] $where[2] OR";
+        $sql = '';
+        if (array_key_exists('AND', $array)) {
+            foreach ($array['OR'] as $where) {
+                if (array_key_exists('AND', $where) || array_key_exists('OR', $where)) {
+                    $sql .= " (";
+                    $sql .= $this->insertWhere($where);
+                    $sql .= ") OR";
+                } else {
+                    $sql .= " $where[0] $where[1] $where[2] OR";
+                }
             }
-            foreach ($this->wheres['AND'] as $wk => $where) {
-                $sql .= " $where[0] $where[1] $where[2]";
-                if ($wk < count($this->wheres['AND']) - 1) {
+            foreach ($array['AND'] as $wk => $where) {
+                if (array_key_exists('AND', $where) || array_key_exists('OR', $where)) {
+                    $sql .= " (";
+                    $sql .= $this->insertWhere($where);
+                    $sql .= ")";
+                } else {
+                    $sql .= " $where[0] $where[1] $where[2]";
+                }
+
+                if ($wk < count($array['AND']) - 1) {
                     $sql .= " AND";
                 }
             }
         } else {
-            foreach ($this->wheres['OR'] as $wk => $where) {
-                $sql .= " $where[0] $where[1] $where[2]";
-                if ($wk < count($this->wheres['OR']) - 1) {
+            foreach ($array['OR'] as $wk => $where) {
+                if (array_key_exists('AND', $where) || array_key_exists('OR', $where)) {
+                    $sql .= " (";
+                    $sql .= $this->insertWhere($where);
+                    $sql .= ")";
+                } else {
+                    $sql .= " $where[0] $where[1] $where[2]";
+                }
+                if ($wk < count($array['OR']) - 1) {
                     $sql .= " OR";
                 }
             }
         }
+        return $sql;
+    }
+
+    private function handleWhere($sql)
+    {
+        $sql = " WHERE";
+        $sql .= $this->insertWhere($this->wheres);
         return $sql;
     }
 
@@ -180,7 +230,7 @@ trait QueryBuilder
         }
 
         if (isset($this->wheres) && is_array($this->wheres)) {
-            $sql = $this->addWhere($sql);
+            $sql .= $this->handleWhere($sql);
         }
 
         if (isset($this->havings) && is_array($this->havings)) {
@@ -192,7 +242,7 @@ trait QueryBuilder
         }
 
 
-        if (isset($this->orders) && is_array($this->havings)) {
+        if (isset($this->orders) && is_array($this->orders)) {
             $sql .= " ORDER BY";
             foreach ($this->orders as $ok => $order) {
                 $sql .= " $order[0] $order[1]";
@@ -233,7 +283,7 @@ trait QueryBuilder
         $sql = "UPDATE $this->from SET " . implode(', ', $data);
 
         if (isset($this->wheres) && is_array($this->wheres)) {
-            $sql = $this->addWhere($sql);
+            $sql .= $this->handleWhere($sql);
         }
         return $this->query("$sql;");
     }
@@ -245,10 +295,11 @@ trait QueryBuilder
         }
         $sql = "DELETE FROM $this->from";
         if (isset($this->wheres) && is_array($this->wheres)) {
-            $sql = $this->addWhere($sql);
+            $sql .= $this->handleWhere($sql);
         }
         return $this->query("$sql;");
     }
+
 
     private function handleString($value)
     {

@@ -1,6 +1,6 @@
 @empty($customers)
 {!'Không có khách hàng nào!'!}
-@endempty
+@else
 <style>
     .full {
         width: 100%;
@@ -26,3 +26,4 @@
     </div>
     @endforeach
 </div>
+@endempty

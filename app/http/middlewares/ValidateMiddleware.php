@@ -4,7 +4,6 @@
 namespace app\http\middlewares;
 
 use app\core\BeforeMiddleware as Middleware;
-use app\core\Registry;
 use app\core\Session;
 
 class ValidateMiddleware extends Middleware
@@ -106,5 +105,73 @@ class ValidateMiddleware extends Middleware
                 $this->redirect($request);
             });
         }
+    }
+
+    public function validate_customer()
+    {
+        $data = $this->request->__dataField;
+        if (array_key_exists('cancel', $data)) {
+            switch ($data['cancel']) {
+                case 'add':
+                {
+                    parent::handle('/myadmin/customers', function ($request) {
+                        $this->redirect($request);
+                    });
+                    break;
+                }
+                case 'edit':
+                {
+                    parent::handle("/myadmin/customers?cp=" . $data['curent_sdt'], function ($request) {
+                        $this->redirect($request);
+                    });
+                    break;
+                }
+            }
+        }
+        $rules = [
+            'customer_fullName' => 'required',
+            'customer_phone' => 'required|matches:^0[0-9]{9}',
+            'customer_address' => 'required',
+        ];
+        if ($data['submit'] === 'add') {
+            $rules['customer_phone'] .= '|unique:Customers:customer_phone';
+        }
+        if ($data['customer_email'] !== '') {
+            $rules['customer_email'] = 'email';
+        }
+        $this->request->rules($rules);
+        $this->request->message([
+            'customer_fullName.required' => 'Vui lòng nhập tên khách hàng!',
+            'customer_phone.required' => 'Vui lòng nhập số điện thoại!',
+            'customer_phone.unique' => 'Khách hàng có số điện thoại này đã tồn tại!',
+            'customer_phone.matches' => 'Sai định dạng số điện thoại! (0xxx xxx xxx)',
+            'customer_address.required' => 'Vui lòng nhập địa chỉ khách hàng!',
+            'customer_email.email' => 'Định dạng email không chính xác!',
+        ]);
+        $validate = $this->request->validate();
+        if (!$validate) {
+            $uri = "/myadmin/customers?page=" . $data['submit'];
+            $uri .= $data['submit'] === 'edit' ? '&sdt=' . $data['curent_sdt'] : '';
+            parent::handle($uri, function ($request) {
+                $this->redirect($request);
+            });
+        }
+//        handle data
+        unset($data['submit']);
+
+        if (!$data['customer_gender'] !== '') {
+            $data['customer_gender'] = (int)$data['customer_gender'];
+        }
+        if (empty($data['customer_birthday'])) {
+            unset($data['customer_birthday']);
+        }
+        if (empty($data['customer_email'])) {
+            unset($data['customer_email']);
+        }
+        if (empty($data['customer_status'])) {
+            unset($data['customer_status']);
+        }
+        $sessionKey = Session::isInvalid();
+        Session::flash($sessionKey . "_data", $data);
     }
 }
