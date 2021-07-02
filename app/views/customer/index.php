@@ -57,7 +57,7 @@
             callAjaxSearchCustomer('filter-customer', data, $('#customer_list'));
         });
 
-        $('#search_customer').event('input', function (e) {
+        $('#search_customer').event('keyup', function (e) {
             if (e.target.value.trim() !== '') {
                 $.e('#search_box').classList.add("active");
                 callAjaxSearchCustomer('search-customer', {
@@ -65,6 +65,7 @@
                 }, $('#search_box'));
             } else {
                 $.e('#search_box').classList.remove("active");
+                $('#search_box').html('');
             }
         });
         $('#search_customer').event('focus', function (e) {

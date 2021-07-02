@@ -272,7 +272,6 @@ trait QueryBuilder
         return $this->query($sql);
     }
 
-
     public function update($data)
     {
         if (!isset($this->from) || empty($this->from)) {
@@ -314,4 +313,54 @@ trait QueryBuilder
         return "$key = $value";
     }
 
+
+//function to test Query builder
+    public function show(){
+        if (!isset($this->from) || empty($this->from)) {
+            return false;
+        }
+        $sql = $this->distinct ? 'SELECT DISTINCT ' : 'SELECT ';
+        if (isset($this->columns) && is_array($this->columns)) {
+            $sql .= implode(', ', $this->columns);
+        } else {
+            $sql .= '*';
+        }
+        $sql .= ' FROM ' . $this->from;
+
+        if (isset($this->joins) && is_array($this->joins)) {
+            foreach ($this->joins as $join) {
+                $sql .= " $join[4] JOIN $join[0] ON $join[1] $join[2] $join[3]";
+            }
+        }
+
+        if (isset($this->wheres) && is_array($this->wheres)) {
+            $sql .= $this->handleWhere($sql);
+        }
+
+        if (isset($this->havings) && is_array($this->havings)) {
+            $sql = $this->addHaving($sql);
+        }
+
+        if (isset($this->groups) && is_array($this->groups)) {
+            $sql .= ' GROUP BY ' . implode(', ', $this->groups);
+        }
+
+
+        if (isset($this->orders) && is_array($this->orders)) {
+            $sql .= " ORDER BY";
+            foreach ($this->orders as $ok => $order) {
+                $sql .= " $order[0] $order[1]";
+                if ($ok < count($this->orders) - 1) {
+                    $sql .= ",";
+                }
+            }
+        }
+        if (isset($this->limit)) {
+            $sql .= " LIMIT $this->limit";
+        }
+        if (isset($this->offset)) {
+            $sql .= " OFFSET $this->offset";
+        }
+        die($sql);
+    }
 }

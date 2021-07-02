@@ -6,10 +6,6 @@ class UserModel extends DB
 {
     const __TABLE__ = 'users';
 
-    public function get()
-    {
-    }
-
     public function getAll()
     {
         $data = DB::table('person')->get();
@@ -39,4 +35,60 @@ class UserModel extends DB
     {
         return DB::table(self::__TABLE__)->insert($data);
     }
+
+    public function getEmployees()
+    {
+        $data = DB::table(self::__TABLE__)->
+        select(['account', 'firstName', 'lastName', 'phone', 'gender', 'level', 'userStatus'])
+            ->where('level', '>', '0')->where('account', '<>', 'admin')->get()->fetchAll(PDO::FETCH_ASSOC);
+        return json_encode($data);
+    }
+
+    public function getEmployeeByID($id)
+    {
+        $data = DB::table(self::__TABLE__)->
+        select(['account', 'firstName', 'lastName', 'phone', 'gender', 'level', 'userStatus'])
+            ->where('level', '>', '0')->where('account', '=', $id)->get()->fetchAll(PDO::FETCH_ASSOC);
+        return json_encode(reset($data));
+    }
+
+    public function searchEpl($key)
+    {
+        $GLOBALS['key'] = $key;
+        $data = DB::table(self::__TABLE__)
+            ->select(['account', 'firstName', 'lastName', 'phone', 'gender', 'level', 'userStatus'])
+            ->where('level', '>', '0')->where('account', '<>', 'admin')
+            ->where(function ($query) {
+                global $key;
+                $query->where('firstName', '=', $key)
+                    ->orWhere('lastName', 'LIKE', "%$key%")
+                    ->orWhere('phone', 'LIKE', "$key%")
+                    ->orWhere('email', 'LIKE', "$key%");
+            })->get()->fetchAll(PDO::FETCH_ASSOC);
+        return json_encode($data);
+    }
+
+
+    public function filterEpl($key, $blacklist)
+    {
+        $sql = DB::table(self::__TABLE__)
+            ->select(['account', 'firstName', 'lastName', 'phone', 'gender', 'level', 'userStatus'])
+            ->where('level', '>', '0')->where('account', '<>', 'admin');
+        if (isset($key)) {
+            $GLOBALS['key'] = $key;
+            $sql = $sql
+                ->where(function ($query) {
+                    global $key;
+                    $query->where('firstName', '=', $key)
+                        ->orWhere('lastName', 'LIKE', "%$key%")
+                        ->orWhere('phone', 'LIKE', "$key%")
+                        ->orWhere('email', 'LIKE', "$key%");
+                });
+        }
+        if ($blacklist) {
+            $sql = $sql->where('userStatus', '=', 'BLOCK');
+        }
+        return json_encode($sql->get()->fetchAll(PDO::FETCH_ASSOC));
+    }
+
 }
