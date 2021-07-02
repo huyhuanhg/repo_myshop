@@ -69,8 +69,31 @@ class UserController extends Controller
 
     public function staff()
     {
-//        $data['categories'] = $this->categoryObj->getAll();
-        $data['_page_title'] = 'Nhân viên';
-        self::render('staff', $data, 'admin/main');
+        if (isset($_GET['dt'])) {
+            if (empty($_GET['dt'])) {
+                $this->redirect('/myadmin/employees');
+            }
+            $data['main']['employee'] = dejson($this->userModel->getEmployeeByID($_GET['dt']));
+            $data['_page_title'] = 'Thông tin nhân viên';
+            self::render('employees/detail', $data, 'admin/main');
+        }
+        if (isset($_GET['k'])) {
+            if (empty($_GET['k'])) {
+                $this->redirect('/myadmin/employees');
+            } else {
+                $data['main']['employees'] = dejson($this->userModel->searchEpl($_GET['k']));
+                $data['_page_title'] = 'Nhân viên';
+                self::render('employees/staff', $data, 'admin/main');
+            }
+        } else {
+            $data['main']['employees'] = dejson($this->userModel->getEmployees());
+            $data['_page_title'] = 'Nhân viên';
+            self::render('employees/staff', $data, 'admin/main');
+        }
+    }
+
+    public function list()
+    {
+        echo __METHOD__;
     }
 }

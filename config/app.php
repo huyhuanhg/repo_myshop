@@ -23,7 +23,6 @@ return [
     ],
     'globalMiddleware' => [
         GlobalMiddleware::class,
-        [GlobalMiddleware::class, 'test'],
     ],
     'boot' => [
         AppServiceProvider::class

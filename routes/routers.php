@@ -35,6 +35,9 @@ Router::group(['middleware' => 'auth', 'namespace' => 'admin'], function () {
 
     //employees
     Router::get('/myadmin/employees', 'User@staff');
+
+    //user list
+    Router::get('/myadmin/userlist', 'User@list');
 });
 Router::group(['namespace' => 'admin'], function () {
     Router::get('/logout', 'User@logout');
@@ -44,9 +47,15 @@ Router::group(['namespace' => 'admin'], function () {
 
 //Ajax
 Router::group(['middleware' => ['auth', 'ajax'], 'namespace' => 'ajax'], function () {
+
     Router::post('/filter-category', 'Category@filter');
     Router::post('/delete-warning-category', 'Category@warring');
+
     Router::post('/search-customer', "Customer@search");
     Router::post('/filter-customer', "Customer@filter");
     Router::post('/customer-alert', "Customer@alert");
+
+    Router::post('/employees-alert', 'User@employeeAlert');
+    Router::post('/search-employees', "User@searchEpl");
+    Router::post('/filter-employees', "User@filterEpl");
 });

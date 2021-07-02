@@ -11,13 +11,10 @@ class CustomerController extends Controller
 
     private $customerObj;
 
-//    private $productObj;
-
     public function __construct()
     {
         parent::__construct();
         $this->customerObj = $this->model('CustomerModel');
-//        $this->productObj = $this->model('ProductModel');
     }
 
 
@@ -37,6 +34,7 @@ class CustomerController extends Controller
         $data['customers'] = dejson($this->customerObj->filter($dataPost['key'], $isBlacklist, $dataPost['sort']));
         self::view('customer/list', $data);
     }
+
     public function alert()
     {
         $data['control'] = $_POST['control'];

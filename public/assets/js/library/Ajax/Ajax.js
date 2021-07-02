@@ -1,4 +1,5 @@
-/*export default */class Ajax {
+/*export default */
+class Ajax {
     get(URL, callback) {
         "use strict";
         // GET
@@ -20,12 +21,15 @@
 
     }
 
-    post(URL, data, callback) {
+    post() {
         "use strict";
-        // POST
-        // console.log(data);
-
-        data = this.#handleData(data);
+        let URL, data = '', callback;
+        if (arguments.length === 3) {
+            [URL, data, callback] = [...arguments];
+            data = this.#handleData(data);
+        } else {
+            [URL, callback] = [...arguments];
+        }
         //Khoi tao doi tuong
         let xhttp = new XMLHttpRequest() || ActiveXObject();
         //Bat su kien thay doi trang thai cuar request

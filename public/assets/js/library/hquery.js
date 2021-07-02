@@ -60,7 +60,7 @@ $.get = function (URL, callback) {
     ajax.get(URL, callback)
 }
 
-$.post = function (URL, data, callback) {
+$.post = function () {
     let ajax = new Ajax();
-    ajax.post(URL, data, callback);
+    ajax.post(...arguments);
 }
